@@ -42,12 +42,12 @@ transform_test = transforms.Compose([
 trainset = torchvision.datasets.CIFAR10(
     root='./data/', train=True, download=True, transform=transform_train)
 trainloader = torch.utils.data.DataLoader(
-    trainset, batch_size=10, shuffle=True, num_workers=2)
+    trainset, batch_size=100, shuffle=False, num_workers=2)
 
 testset = torchvision.datasets.CIFAR10(
     root='./data/', train=False, download=True, transform=transform_test)
 testloader = torch.utils.data.DataLoader(
-    testset, batch_size=10, shuffle=False, num_workers=2)
+    testset, batch_size=100, shuffle=False, num_workers=2)
 
 classes = ('plane', 'car', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck')
@@ -104,7 +104,7 @@ def translate2d(data, labels, n=None, stride=1):
     return (torch.cat(data_new), 
             labels.repeat(nrepeats))
 
-def test(epoch):
+def test():
     global best_acc
     net.eval()
     test_loss = 0
@@ -113,7 +113,7 @@ def test(epoch):
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
-            inputs, targets = F.translate2d(inputs, targets, n=2, stride=4)
+            inputs, targets = translate2d(inputs, targets, n=2, stride=4)
             outputs = net(inputs)
             loss = criterion(outputs, targets)
 
@@ -127,7 +127,7 @@ def test(epoch):
 
     print('Test Accuracy:', correct/total*100.)
 
-def train(epoch):
+def train():
     global best_acc
     net.eval()
     test_loss = 0
@@ -136,7 +136,7 @@ def train(epoch):
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(trainloader):
             inputs, targets = inputs.to(device), targets.to(device)
-            inputs, targets = F.translate2d(inputs, targets, n=2, stride=4)
+            inputs, targets = translate2d(inputs, targets, n=2, stride=4)
             outputs = net(inputs)
             loss = criterion(outputs, targets)
 
