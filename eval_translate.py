@@ -104,7 +104,7 @@ def translate2d(data, labels, n=None, stride=1):
     return (torch.cat(data_new), 
             labels.repeat(nrepeats))
 
-def test():
+def translate_test():
     global best_acc
     net.eval()
     test_loss = 0
@@ -124,10 +124,10 @@ def test():
 
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
+    TRANSLATE_TEST_ACC = correct/total*100.
+    print('Translate Test Accuracy:', correct/total*100.)
 
-    print('Test Accuracy:', correct/total*100.)
-
-def train():
+def translate_train():
     global best_acc
     net.eval()
     test_loss = 0
@@ -148,7 +148,60 @@ def train():
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
+    TRANSLATE_TRAIN_ACC = correct/total*100.
+    print('Translate Train Accuracy:', correct/total*100.)
+
+def test():
+    global best_acc
+    net.eval()
+    test_loss = 0
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for batch_idx, (inputs, targets) in enumerate(testloader):
+            inputs, targets = inputs.to(device), targets.to(device)
+            outputs = net(inputs)
+            loss = criterion(outputs, targets)
+
+            test_loss += loss.item()
+            _, predicted = outputs.max(1)
+            total += targets.size(0)
+            correct += predicted.eq(targets).sum().item()
+
+            progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                         % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
+    TEST_ACC = correct/total*100.
+    print('Test Accuracy:', correct/total*100.)
+
+def train():
+    global best_acc
+    net.eval()
+    test_loss = 0
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for batch_idx, (inputs, targets) in enumerate(trainloader):
+            inputs, targets = inputs.to(device), targets.to(device)
+            outputs = net(inputs)
+            loss = criterion(outputs, targets)
+
+            test_loss += loss.item()
+            _, predicted = outputs.max(1)
+            total += targets.size(0)
+            correct += predicted.eq(targets).sum().item()
+
+            progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                         % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
+
+    TRAIN_ACC = correct/total*100.
     print('Train Accuracy:', correct/total*100.)
 
+translate_train()
+translate_TRANSLATE_test()
 train()
 test()
+
+print("Translate TrainAccuracy:", TRANSLATE_TRAIN_ACC)
+print("Translate Test Accuracy:", TRANSLATE_TEST_ACC)
+print("Train Accuracy:", TRAIN_ACC)
+print("Test Accuracy:", TEST_ACC)
