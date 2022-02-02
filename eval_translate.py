@@ -124,8 +124,8 @@ def translate_test():
 
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
-    TRANSLATE_TEST_ACC = correct/total*100.
     print('Translate Test Accuracy:', correct/total*100.)
+    return correct/total*100.
 
 def translate_train():
     global best_acc
@@ -148,8 +148,8 @@ def translate_train():
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-    TRANSLATE_TRAIN_ACC = correct/total*100.
     print('Translate Train Accuracy:', correct/total*100.)
+    return correct/total*100.
 
 def test():
     global best_acc
@@ -170,8 +170,9 @@ def test():
 
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
-    TEST_ACC = correct/total*100.
+    
     print('Test Accuracy:', correct/total*100.)
+    return correct/total*100.
 
 def train():
     global best_acc
@@ -193,13 +194,13 @@ def train():
             progress_bar(batch_idx, len(testloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
                          % (test_loss/(batch_idx+1), 100.*correct/total, correct, total))
 
-    TRAIN_ACC = correct/total*100.
     print('Train Accuracy:', correct/total*100.)
+    return correct/total*100.
 
-translate_train()
-translate_TRANSLATE_test()
-train()
-test()
+TRANSLATE_TRAIN_ACC = translate_train()
+TRANSLATE_TEST_ACC = translate_test()
+TRAIN_ACC = train()
+TEST_ACC = test()
 
 print("Translate TrainAccuracy:", TRANSLATE_TRAIN_ACC)
 print("Translate Test Accuracy:", TRANSLATE_TEST_ACC)
